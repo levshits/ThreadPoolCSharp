@@ -1,0 +1,34 @@
+﻿<Application x:Class="HashFinder.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:HashFinder.Models"
+             StartupUri="Views/FilesHashesView.xaml">
+    <Application.Resources>
+        <DataTemplate x:Key="FileHashesViewModelTemplate" DataType="models:FileHashes">
+            <Grid>
+                <StackPanel Margin="0,0,0,0" Orientation="Vertical">
+                    <StackPanel Height="35.96" Orientation="Horizontal">
+                        <Label Content="Filename: "/>
+                        <Label Content="{Binding Path}"/>
+                    </StackPanel>
+                    <StackPanel Height="35.96" Orientation="Horizontal">
+                        <Label Content="SHA256: "/>
+                        <Label Content="{Binding Sha256Hash}"/>
+                    </StackPanel>
+                    <StackPanel Height="35.96" Orientation="Horizontal">
+                        <Label Content="Md5Hash: "/>
+                        <Label Content="{Binding Md5Hash}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="LogItemView" DataType="models:LogItem">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding DateTime}"/>
+                    <Label Content="{Binding Message}"></Label>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Application.Resources>
+</Application>
