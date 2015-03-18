@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace ThreadPoolLibrary
 {
+    /// <summary>
+    /// Customer thread pool class
+    /// </summary>
     public class ThreadPool{
 
         public int LifeTime { get; set; }
@@ -72,12 +75,29 @@ namespace ThreadPoolLibrary
                 worker.Stop();
 
             }
+            //ToDo
+            // Need to find the better logic for thread pool terminating
+            var spin = 0;
             while (_workers.Count > 0)
             {
-                if (_workers[0].Status != ThreadStatus.Died)
+                if (_workers[0].Status == ThreadStatus.Died)
                 {
                     _workers.RemoveAt(0);
                 }
+                else
+                {
+                    if (spin > 1000)
+                    {
+                        _workers[0].Terminate();
+                        _workers.RemoveAt(0);
+                    }
+                }
+                if (_workers.Count > 0 && spin%_workers.Count == 0)
+                {
+                    Thread.Yield();
+                    Thread.Sleep(100);
+                }
+                spin++;
             }
         }
 
@@ -142,8 +162,12 @@ namespace ThreadPoolLibrary
                 logger.Log(msg);
             }
         }
-
-        class PooledTask
+        /// <summary>
+        /// Abstraction of thread in the pool.
+        /// Can be waked up, terminated, stopped.
+        /// Different type of thread in pool must implement own logic
+        /// </summary>
+        abstract class PooledTask
         {
             public ITask Task { get; private set; }
             public Action<ITask> Callback  { get; private set; }
@@ -193,6 +217,15 @@ namespace ThreadPoolLibrary
             {
                 IsRunned = false;
                 WakeThread();
+            }
+
+            public void Terminate()
+            {
+                var thread = Thread;
+                if (thread != null && thread.IsAlive)
+                {
+                    thread.Abort();
+                }
             }
             private static void ThreadStartFunct(Object obj)
             {

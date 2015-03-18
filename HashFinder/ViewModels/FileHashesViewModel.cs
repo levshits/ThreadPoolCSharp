@@ -51,7 +51,7 @@ namespace HashFinder.ViewModels
         public FileHashesViewModel()
         {
             FilesHashes = new ObservableCollection<FileHashes>();
-            _pool = new ThreadPool(0, 10, 3000);
+            _pool = new ThreadPool(3, 15, 3000);
             _pool.Logger = this;
             _pool.Run();
             LoadFilesCommand = new LoadFiles(this);
